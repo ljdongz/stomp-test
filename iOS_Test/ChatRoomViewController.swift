@@ -87,6 +87,8 @@ class ChatRoomViewController: MessagesViewController {
     
     private var inputBarIntrinctSize: CGSize = CGSize()
     
+    private var tapGesture = UITapGestureRecognizer()
+    
     // MARK: - viewDidLoad()
     
     override func viewDidLoad() {
@@ -105,9 +107,14 @@ class ChatRoomViewController: MessagesViewController {
         
         makeDummyData()
         setupInputBar()
-        setupDelegate()
+        setupMessagesCollectionView()
         setupMessagesCollectionViewFlowLayout()
         
+        
+    }
+    
+    @objc func handleTap() {
+        view.endEditing(true)
     }
     
 //    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
@@ -120,9 +127,9 @@ class ChatRoomViewController: MessagesViewController {
 //        }
 //    }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
+//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        self.view.endEditing(true)
+//    }
     
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -130,24 +137,27 @@ class ChatRoomViewController: MessagesViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     // MARK: - setupDelegate()
     
-    func setupDelegate() {
+    func setupMessagesCollectionView() {
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messageCellDelegate = self
+        
+        messageInputBar.delegate = self
         
         //scrollsToLastItemOnKeyboardBeginsEditing = true // default false
         maintainPositionOnInputBarHeightChanged = true // default false
         
         showMessageTimestampOnSwipeLeft = true // default false
         
-        messageInputBar.delegate = self
+        messagesCollectionView.keyboardDismissMode = .onDrag
     }
     
     // MARK: - makeDummyData() {
@@ -244,12 +254,19 @@ class ChatRoomViewController: MessagesViewController {
     
     @objc func keyboardWillShow(_ notification: NSNotification) {
         
+        // 메시지 컬렉션 뷰 클릭 동작 X -> 화면 터치 시 키보드 내려가도록 하기 위함
+        
+        // Case 1. 키보드 올린 상태에서 스크롤 시 키보드 내려감 (touchBegan 오버라이드 메서드 추가 필요)
+        //messagesCollectionView.isUserInteractionEnabled = false
+        
+        // Cse 2. 키보드 올린 상태에서 스크롤 시 키보드 내려가지 않음
+        // (But, 키보드를 바로 내릴 시 InputBar 오토레이아웃이 이상해서 스크롤 시 키보드 내려가도록 설정함)
+        tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+        messagesCollectionView.addGestureRecognizer(tapGesture)
+        
         messageInputBar.topStackView.snp.updateConstraints { make in
             make.height.equalTo(40)
         }
-        
-        // 메시지 컬렉션 뷰 클릭 동작 X -> 화면 터치 시 키보드 내려가도록 하기 위해
-        messagesCollectionView.isUserInteractionEnabled = false
         
 //        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
 //            UIView.animate(withDuration: 0.3, animations: {
@@ -259,12 +276,17 @@ class ChatRoomViewController: MessagesViewController {
     }
     
     @objc func keyboardWillHide() {
+        // 메시지 컬렉션 뷰 클릭 가능하도록
+        
+        // Case 1.
+        //messagesCollectionView.isUserInteractionEnabled = true
+        
+        // Case 2. keyboardWillShow에서 추가한 제스처 삭제
+        messagesCollectionView.removeGestureRecognizer(tapGesture)
+        
         messageInputBar.topStackView.snp.updateConstraints { make in
             make.height.equalTo(0)
         }
-        
-        // 메시지 컬렉션 뷰 클릭 가능하도록
-        messagesCollectionView.isUserInteractionEnabled = true
         
         //self.messagesCollectionView.transform = .identity
     }
