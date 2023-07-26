@@ -85,7 +85,7 @@ class ChatRoomViewController: MessagesViewController {
     private let otherSender = Sender(senderId: "2", displayName: "unknown")
     private let thirdSender = Sender(senderId: "3", displayName: "Who")
     
-    private var inputBarIntrinctSize: CGSize = CGSize()
+    private var inputBarTopStackViewHeight: CGFloat = 0
     
     private var tapGesture = UITapGestureRecognizer()
     
@@ -339,13 +339,13 @@ extension ChatRoomViewController: MessagesDataSource {
         }
     }
     
-    func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
-        let dateString = formatter.string(from: message.sentDate)
-        
-        return NSAttributedString(
-            string: dateString,
-            attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
-    }
+//    func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
+//        let dateString = formatter.string(from: message.sentDate)
+//
+//        return NSAttributedString(
+//            string: dateString,
+//            attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+//    }
     
     func cellBottomLabelAttributedText(for _: MessageType, at _: IndexPath) -> NSAttributedString? {
         return NSAttributedString(
@@ -405,13 +405,13 @@ extension ChatRoomViewController: MessagesLayoutDelegate {
     // 메시지 탑
     func messageTopLabelHeight(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> CGFloat {
         
-        if isSenderConsecutiveMessages(indexPath: indexPath) { return 0 }
+        if isSenderConsecutiveMessages(indexPath: indexPath) || message.sender.senderId == selfSender.senderId { return 0 }
         else { return 15 }
     }
     
     // 메시지 바텀
     func messageBottomLabelHeight(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> CGFloat {
-        return 15
+        return 2
     }
 
     // 셀 바텀
@@ -436,17 +436,16 @@ extension ChatRoomViewController: InputBarAccessoryViewDelegate {
         
         // 기존 messagesCollectionView 컨텐트 사이즈 높이에서 늘어난 inputBar 사이즈 높이만큼 빼기
         let before = messagesCollectionView.contentSize
-        messagesCollectionView.contentSize = CGSize(width: before.width, height: before.height - inputBarIntrinctSize.height)
-        view.layoutIfNeeded()
+        messagesCollectionView.contentSize = CGSize(width: before.width, height: before.height - inputBarTopStackViewHeight)
         
-        
-        self.messagesCollectionView.scrollToLastItem(at: .bottom, animated: true)
+        self.messagesCollectionView.scrollToLastItem(at: .bottom, animated: false)
     }
     
     // inputBar size가 변경될 때
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
         // 기존 보다 얼마만큼 높이가 늘어났는지 저장
-        inputBarIntrinctSize = CGSize(width: size.width, height: size.height - 50)
+        print(size.height - 50)
+        inputBarTopStackViewHeight = size.height - 50
     }
 }
 
