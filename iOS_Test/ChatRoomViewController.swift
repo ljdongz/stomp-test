@@ -71,6 +71,16 @@ class ChatRoomViewController: MessagesViewController {
         return button
     }()
     
+    // scrollToBottom 버튼
+    private lazy var scrollToBottomButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .lightGray
+        button.tintColor = .white
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.alpha = 0
+        return button
+    }()
+    
     // MARK: - Property
     
     private let formatter: DateFormatter = {
@@ -95,51 +105,88 @@ class ChatRoomViewController: MessagesViewController {
         super.viewDidLoad()
         
         view.clipsToBounds = true
-
+        
         updateSubTitleView(title: "Channel", subtitle: "모임 정보 보기")
         
-//        editMenuInteraction = UIEditMenuInteraction(delegate: self)
-//        messagesCollectionView.addInteraction(editMenuInteraction!)
-//
-//        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
-//        longPress.allowedTouchTypes = [UITouch.TouchType.direct.rawValue as NSNumber]
-//        messagesCollectionView.addGestureRecognizer(longPress)
+        //        editMenuInteraction = UIEditMenuInteraction(delegate: self)
+        //        messagesCollectionView.addInteraction(editMenuInteraction!)
+        //
+        //        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
+        //        longPress.allowedTouchTypes = [UITouch.TouchType.direct.rawValue as NSNumber]
+        //        messagesCollectionView.addGestureRecognizer(longPress)
         
         makeDummyData()
         setupInputBar()
         setupMessagesCollectionView()
         setupMessagesCollectionViewFlowLayout()
-        
+        setupCodeUI()
         
     }
     
-    @objc func handleTap() {
-        view.endEditing(true)
-    }
+    //    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
+    //        let location = sender.location(in: self.messagesCollectionView)
+    //        let configuration = UIEditMenuConfiguration(identifier: nil, sourcePoint: location)
+    //
+    //        if let interaction = editMenuInteraction {
+    //            // Present the edit menu interaction.
+    //            interaction.presentEditMenu(with: configuration)
+    //        }
+    //    }
     
-//    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
-//        let location = sender.location(in: self.messagesCollectionView)
-//        let configuration = UIEditMenuConfiguration(identifier: nil, sourcePoint: location)
-//
-//        if let interaction = editMenuInteraction {
-//            // Present the edit menu interaction.
-//            interaction.presentEditMenu(with: configuration)
-//        }
-//    }
+    //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+    //        self.view.endEditing(true)
+    //    }
     
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-//        self.view.endEditing(true)
-//    }
+    
+    // MARK: - viewWillAppear()
     
     override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
+    // MARK: - viewWillDisappear()
+    
     override func viewWillDisappear(_ animated: Bool) {
-
+        super.viewWillDisappear(animated)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    // MARK: - scrollViewDidScroll()
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let contentOffsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let scrollViewHeight = scrollView.bounds.height
+        
+        // 뱅크 뷰가 나타날 위치를 계산합니다.
+        let bankViewY = contentHeight - scrollViewHeight + 50
+        
+        UIView.animate(withDuration: 0.3) {
+            let alpha = (contentOffsetY >= bankViewY - 100) ? 0.0 : 0.8
+            self.scrollToBottomButton.alpha = alpha
+        }
+    }
+    
+    // MARK: - setupCodeUI()
+    
+    func setupCodeUI() {
+        view.addSubview(scrollToBottomButton)
+        view.bringSubviewToFront(scrollToBottomButton)
+        
+        scrollToBottomButton.snp.makeConstraints { make in
+            make.bottom.equalTo(messageInputBar.snp.top).offset(-20)
+            make.trailing.equalToSuperview().inset(20)
+            make.width.height.equalTo(40)
+        }
+        
+        view.layoutIfNeeded()
+        scrollToBottomButton.layer.cornerRadius = scrollToBottomButton.frame.width / 2
+        
+        scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - setupDelegate()
@@ -160,7 +207,7 @@ class ChatRoomViewController: MessagesViewController {
         messagesCollectionView.keyboardDismissMode = .onDrag
     }
     
-    // MARK: - makeDummyData() {
+    // MARK: - makeDummyData()
     
     func makeDummyData() {
         messages.append(Message(sender: selfSender, messageId: "Mock Id 1", sentDate: Date(), kind: .text("Hello")))
@@ -170,8 +217,8 @@ class ChatRoomViewController: MessagesViewController {
         messages.append(Message(sender: thirdSender, messageId: "Mock Id 2", sentDate: Date(), kind: .text("Hi4")))
         messages.append(Message(sender: otherSender, messageId: "Mock Id 2", sentDate: Date(), kind: .text("Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5Hi5")))
         
-        //Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
-    
+        Timer.scheduledTimer(timeInterval: 5, target: self, selector: #selector(timerAction), userInfo: nil, repeats: true)
+        
         messagesCollectionView.reloadData()
     }
     
@@ -268,11 +315,11 @@ class ChatRoomViewController: MessagesViewController {
             make.height.equalTo(40)
         }
         
-//        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-//            UIView.animate(withDuration: 0.3, animations: {
-//                self.messagesCollectionView.transform = CGAffineTransform(translationX: 0, y: -(keyboardSize.height + 40))
-//            })
-//        }
+        //        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+        //            UIView.animate(withDuration: 0.3, animations: {
+        //                self.messagesCollectionView.transform = CGAffineTransform(translationX: 0, y: -(keyboardSize.height + 40))
+        //            })
+        //        }
     }
     
     @objc func keyboardWillHide() {
@@ -291,11 +338,18 @@ class ChatRoomViewController: MessagesViewController {
         //self.messagesCollectionView.transform = .identity
     }
     
+    @objc func handleTap() {
+        view.endEditing(true)
+    }
+    
+    @objc func scrollToBottomButtonTapped() {
+        messagesCollectionView.scrollToLastItem(at: .bottom, animated: false)
+    }
+    
     @objc func timerAction() {
         guard let sd = [otherSender, thirdSender].randomElement() else { return }
         messages.append(Message(sender: sd, messageId: "1", sentDate: Date(), kind: .text("Test")))
         messagesCollectionView.reloadData()
-        messagesCollectionView.scrollToLastItem(at: .bottom, animated: true)
     }
     
 }
@@ -339,13 +393,13 @@ extension ChatRoomViewController: MessagesDataSource {
         }
     }
     
-//    func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
-//        let dateString = formatter.string(from: message.sentDate)
-//
-//        return NSAttributedString(
-//            string: dateString,
-//            attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
-//    }
+    //    func messageBottomLabelAttributedText(for message: MessageType, at _: IndexPath) -> NSAttributedString? {
+    //        let dateString = formatter.string(from: message.sentDate)
+    //
+    //        return NSAttributedString(
+    //            string: dateString,
+    //            attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .caption2)])
+    //    }
     
     func cellBottomLabelAttributedText(for _: MessageType, at _: IndexPath) -> NSAttributedString? {
         return NSAttributedString(
@@ -368,7 +422,7 @@ extension ChatRoomViewController: MessagesDisplayDelegate {
     
     // 텍스트 색상
     func textColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
-        return isFromCurrentSender(message: message) ? .black : .white
+        return .white
     }
     
     // 말풍선의 꼬리 모양 방향
@@ -413,7 +467,7 @@ extension ChatRoomViewController: MessagesLayoutDelegate {
     func messageBottomLabelHeight(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> CGFloat {
         return 2
     }
-
+    
     // 셀 바텀
     func cellBottomLabelHeight(for _: MessageType, at _: IndexPath, in _: MessagesCollectionView) -> CGFloat {
         return 0
@@ -434,11 +488,12 @@ extension ChatRoomViewController: InputBarAccessoryViewDelegate {
         
         messagesCollectionView.reloadData()
         
-        // 기존 messagesCollectionView 컨텐트 사이즈 높이에서 늘어난 inputBar 사이즈 높이만큼 빼기
+        // 기존 messagesCollectionView 컨텐트 사이즈 높이에서 늘어난 inputBar 사이즈 높이만큼 빼기 (오토레이아웃 오류때문에 구현함)
         let before = messagesCollectionView.contentSize
         messagesCollectionView.contentSize = CGSize(width: before.width, height: before.height - inputBarTopStackViewHeight)
         
         self.messagesCollectionView.scrollToLastItem(at: .bottom, animated: false)
+        
     }
     
     // inputBar size가 변경될 때
