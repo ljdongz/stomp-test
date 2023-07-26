@@ -95,7 +95,7 @@ class ChatRoomViewController: MessagesViewController {
     private let otherSender = Sender(senderId: "2", displayName: "unknown")
     private let thirdSender = Sender(senderId: "3", displayName: "Who")
     
-    private var inputBarTopStackViewHeight: CGFloat = 0
+    private var inputBarIntrinsicContentHeight: CGFloat = 0
     
     private var tapGesture = UITapGestureRecognizer()
     
@@ -490,7 +490,7 @@ extension ChatRoomViewController: InputBarAccessoryViewDelegate {
         
         // 기존 messagesCollectionView 컨텐트 사이즈 높이에서 늘어난 inputBar 사이즈 높이만큼 빼기 (오토레이아웃 오류때문에 구현함)
         let before = messagesCollectionView.contentSize
-        messagesCollectionView.contentSize = CGSize(width: before.width, height: before.height - inputBarTopStackViewHeight)
+        messagesCollectionView.contentSize = CGSize(width: before.width, height: before.height - inputBarIntrinsicContentHeight)
         
         self.messagesCollectionView.scrollToLastItem(at: .bottom, animated: false)
         
@@ -499,8 +499,7 @@ extension ChatRoomViewController: InputBarAccessoryViewDelegate {
     // inputBar size가 변경될 때
     func inputBar(_ inputBar: InputBarAccessoryView, didChangeIntrinsicContentTo size: CGSize) {
         // 기존 보다 얼마만큼 높이가 늘어났는지 저장
-        print(size.height - 50)
-        inputBarTopStackViewHeight = size.height - 50
+        inputBarIntrinsicContentHeight = size.height - inputBar.topStackView.frame.height
     }
 }
 
