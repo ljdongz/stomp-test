@@ -280,6 +280,17 @@ class ChatRoomViewController: MessagesViewController {
         
     }
     
+    func extractTextMessage(messageKind: MessageKind) {
+        switch messageKind {
+        case .text(let text):
+            // .text 케이스에서 텍스트 값을 가져와서 출력합니다.
+            print("\(text)")
+        default:
+            // 다른 케이스에 대한 처리를 추가할 수 있습니다.
+            break
+        }
+    }
+    
     /// 한 사람이 연속해서 메시지를 보내는지 체크
     /// - Parameter indexPath: indexPath
     /// - Returns: true: 연속, false: 비연속
@@ -510,8 +521,14 @@ extension ChatRoomViewController: MessageCellDelegate {
         print("Tap Avatar")
     }
     
-    func didTapMessage(in _: MessageCollectionViewCell) {
+    func didTapMessage(in cell: MessageCollectionViewCell) {
         print("Message tapped")
+        
+        guard let indexPath = messagesCollectionView.indexPath(for: cell) else {
+            return }
+        
+        extractTextMessage(messageKind: messages[indexPath.section].kind)
+        
     }
 }
 
