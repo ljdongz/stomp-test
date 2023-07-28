@@ -189,7 +189,7 @@ class ChatRoomViewController: MessagesViewController {
         scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
     }
     
-    // MARK: - setupDelegate()
+    // MARK: - setupMessagesCollectionView()
     
     func setupMessagesCollectionView() {
         messagesCollectionView.messagesDataSource = self
@@ -204,7 +204,7 @@ class ChatRoomViewController: MessagesViewController {
         
         showMessageTimestampOnSwipeLeft = true // default false
         
-        messagesCollectionView.keyboardDismissMode = .onDrag
+        messagesCollectionView.keyboardDismissMode = .none
     }
     
     // MARK: - makeDummyData()

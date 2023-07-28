@@ -18,6 +18,10 @@
 		570063A52A6D7E7B0051F42A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063A42A6D7E7B0051F42A /* ViewController.swift */; };
 		570063A72A6D84200051F42A /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063A62A6D84200051F42A /* ChatViewController.swift */; };
 		570063A92A6E50850051F42A /* UIViewController+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063A82A6E50850051F42A /* UIViewController+Ext.swift */; };
+		570063B12A73A4650051F42A /* CustomChatRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B02A73A4650051F42A /* CustomChatRoomViewController.swift */; };
+		570063B32A73A4CE0051F42A /* MyMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B22A73A4CE0051F42A /* MyMessageTableViewCell.swift */; };
+		570063B62A73A4E50051F42A /* OtherMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B52A73A4E50051F42A /* OtherMessageTableViewCell.swift */; };
+		570063B92A73A6C30051F42A /* KeyboardInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B82A73A6C30051F42A /* KeyboardInputBar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +36,10 @@
 		570063A42A6D7E7B0051F42A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		570063A62A6D84200051F42A /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		570063A82A6E50850051F42A /* UIViewController+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Ext.swift"; sourceTree = "<group>"; };
+		570063B02A73A4650051F42A /* CustomChatRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomChatRoomViewController.swift; sourceTree = "<group>"; };
+		570063B22A73A4CE0051F42A /* MyMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMessageTableViewCell.swift; sourceTree = "<group>"; };
+		570063B52A73A4E50051F42A /* OtherMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherMessageTableViewCell.swift; sourceTree = "<group>"; };
+		570063B82A73A6C30051F42A /* KeyboardInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInputBar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,16 +76,53 @@
 			children = (
 				5700637B2A651E790051F42A /* AppDelegate.swift */,
 				5700637D2A651E790051F42A /* SceneDelegate.swift */,
+				570063AE2A73A42D0051F42A /* MessageKit */,
+				570063AF2A73A43E0051F42A /* CustomChatRoom */,
+				570063A82A6E50850051F42A /* UIViewController+Ext.swift */,
 				570063A42A6D7E7B0051F42A /* ViewController.swift */,
-				570063A62A6D84200051F42A /* ChatViewController.swift */,
-				5700637F2A651E790051F42A /* ChatRoomViewController.swift */,
 				570063812A651E790051F42A /* Main.storyboard */,
 				570063842A651E7B0051F42A /* Assets.xcassets */,
 				570063862A651E7B0051F42A /* LaunchScreen.storyboard */,
 				570063892A651E7B0051F42A /* Info.plist */,
-				570063A82A6E50850051F42A /* UIViewController+Ext.swift */,
 			);
 			path = iOS_Test;
+			sourceTree = "<group>";
+		};
+		570063AE2A73A42D0051F42A /* MessageKit */ = {
+			isa = PBXGroup;
+			children = (
+				570063A62A6D84200051F42A /* ChatViewController.swift */,
+				5700637F2A651E790051F42A /* ChatRoomViewController.swift */,
+			);
+			path = MessageKit;
+			sourceTree = "<group>";
+		};
+		570063AF2A73A43E0051F42A /* CustomChatRoom */ = {
+			isa = PBXGroup;
+			children = (
+				570063B72A73A6990051F42A /* CustomView */,
+				570063B42A73A4D40051F42A /* Cell */,
+				570063B02A73A4650051F42A /* CustomChatRoomViewController.swift */,
+			);
+			path = CustomChatRoom;
+			sourceTree = "<group>";
+		};
+		570063B42A73A4D40051F42A /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				570063B22A73A4CE0051F42A /* MyMessageTableViewCell.swift */,
+				570063B52A73A4E50051F42A /* OtherMessageTableViewCell.swift */,
+			);
+			name = Cell;
+			path = "ㅊ디ㅣ";
+			sourceTree = "<group>";
+		};
+		570063B72A73A6990051F42A /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				570063B82A73A6C30051F42A /* KeyboardInputBar.swift */,
+			);
+			path = CustomView;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -159,12 +204,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				570063B62A73A4E50051F42A /* OtherMessageTableViewCell.swift in Sources */,
 				570063802A651E790051F42A /* ChatRoomViewController.swift in Sources */,
 				5700637C2A651E790051F42A /* AppDelegate.swift in Sources */,
 				570063A92A6E50850051F42A /* UIViewController+Ext.swift in Sources */,
 				570063A52A6D7E7B0051F42A /* ViewController.swift in Sources */,
 				570063A72A6D84200051F42A /* ChatViewController.swift in Sources */,
+				570063B32A73A4CE0051F42A /* MyMessageTableViewCell.swift in Sources */,
+				570063B12A73A4650051F42A /* CustomChatRoomViewController.swift in Sources */,
 				5700637E2A651E790051F42A /* SceneDelegate.swift in Sources */,
+				570063B92A73A6C30051F42A /* KeyboardInputBar.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
