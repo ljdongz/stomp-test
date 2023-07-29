@@ -74,6 +74,17 @@ class CustomChatRoomViewController: UIViewController {
         return tv
     }()
     
+    // scrollToBottom 버튼
+    private lazy var scrollToBottomButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .lightGray
+        button.tintColor = .white
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.alpha = 0
+        button.layer.cornerRadius = 20
+        return button
+    }()
+    
     // 키보드 뒤에 숨겨지는 뷰
     private lazy var bottomView: UIView = {
         let view = UIView()
@@ -85,19 +96,6 @@ class CustomChatRoomViewController: UIViewController {
     private var tapGesture = UITapGestureRecognizer()
     
     var editMenuInteraction: UIEditMenuInteraction?
-    
-    var dummy: [String] = [
-        "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",
-        "hello \n hahah",
-        "hello \n hahah \n hadfha",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
-        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA"
-    ]
     
     var messages: [CustomMessage] = [
         CustomMessage(sender: CustomSender(senderId: "1", displayName: "JD"), sentDate: Date(), content: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."),
@@ -131,9 +129,20 @@ class CustomChatRoomViewController: UIViewController {
         addTargets()
         configureTableView()
         
-        
         editMenuInteraction = UIEditMenuInteraction(delegate: self)
         messagesTableView.addInteraction(editMenuInteraction!)
+        
+        
+        view.addSubview(scrollToBottomButton)
+        view.bringSubviewToFront(scrollToBottomButton)
+
+        scrollToBottomButton.snp.makeConstraints { make in
+            make.bottom.equalTo(inputBarTopStackView.snp.top).offset(-5)
+            make.trailing.equalToSuperview().inset(20)
+            make.width.height.equalTo(40)
+        }
+
+        scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - viewWillAppear
@@ -142,6 +151,7 @@ class CustomChatRoomViewController: UIViewController {
         super.viewWillAppear(animated)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
     }
     
     // MARK: - viewWillDisappear
@@ -220,6 +230,10 @@ class CustomChatRoomViewController: UIViewController {
         messagesTableView.register(OtherMessageTableViewCell.self, forCellReuseIdentifier: OtherMessageTableViewCell.identifier)
     }
     
+    private func scrollToBottom() {
+        messagesTableView.scrollToRow(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: false)
+    }
+    
     /// 한 사람이 연속해서 메시지를 보내는지 체크
     /// - Parameter indexPath: indexPath
     /// - Returns: true: 연속, false: 비연속
@@ -227,7 +241,6 @@ class CustomChatRoomViewController: UIViewController {
         if row != 0 && (messages[row - 1].sender.senderId == messages[row].sender.senderId) { return true }
         else { return false }
     }
-    
     
     // MARK: - @objc func
     
@@ -291,6 +304,10 @@ class CustomChatRoomViewController: UIViewController {
         targetLanguageButton.setTitle(sourceLanguageButton.currentTitle, for: .normal)
         sourceLanguageButton.setTitle(swap, for: .normal)
     }
+    
+    @objc func scrollToBottomButtonTapped() {
+        scrollToBottom()
+    }
 }
 
 // MARK: - Ext: TableView
@@ -325,6 +342,21 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
        return UITableView.automaticDimension
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        let contentOffsetY = scrollView.contentOffset.y
+        let contentHeight = scrollView.contentSize.height
+        let scrollViewHeight = scrollView.bounds.height
+        
+        // 뱅크 뷰가 나타날 위치를 계산합니다.
+        let bankViewY = contentHeight - scrollViewHeight + 50
+        
+        UIView.animate(withDuration: 0.3) {
+            let alpha = (contentOffsetY >= bankViewY - 100) ? 0.0 : 0.8
+            self.scrollToBottomButton.alpha = alpha
+        }
     }
 }
 
@@ -365,10 +397,9 @@ extension CustomChatRoomViewController: KeyboardInputBarDelegate {
         
         messagesTableView.reloadData()
         
-        let indexPath = IndexPath(row: messages.count - 1, section: 0)
-        
-        messagesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+        scrollToBottom()
     }
+    
     func didTapTranslate(_ isTranslated: Bool) {
         print("Tapppp")
         inputBarTopStackView.isHidden = !isTranslated
