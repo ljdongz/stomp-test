@@ -55,6 +55,12 @@ class CustomChatRoomViewController: UIViewController {
         return button
     }()
     
+    private lazy var messagesTableView: UITableView = {
+        let tv = UITableView()
+        //tv.separatorStyle = .none
+        return tv
+    }()
+    
     // 키보드 뒤에 숨겨지는 뷰
     private lazy var bottomView: UIView = {
         let view = UIView()
@@ -64,6 +70,12 @@ class CustomChatRoomViewController: UIViewController {
     // MARK: - Property
     
     private var tapGesture = UITapGestureRecognizer()
+    
+    var dummy: [String] = [
+        "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",
+        "hello \n hahah",
+        "hello \n hahah \n hadfha"
+    ]
     
     // MARK: - viewDidLoad()
     
@@ -77,6 +89,7 @@ class CustomChatRoomViewController: UIViewController {
         addSubviews()
         configureConstraints()
         addTargets()
+        configureTableView()
     }
     
     // MARK: - viewWillAppear
@@ -99,6 +112,7 @@ class CustomChatRoomViewController: UIViewController {
     
     private func addSubviews() {
         view.addSubview(keyboardInputBar)
+        view.addSubview(messagesTableView)
         view.addSubview(inputBarTopStackView)
         
         inputBarTopStackView.addArrangedSubview(sourceLanguageButton)
@@ -134,6 +148,12 @@ class CustomChatRoomViewController: UIViewController {
             make.width.equalToSuperview().multipliedBy(0.2/0.5)
         }
         
+        messagesTableView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(keyboardInputBar.snp.top)
+        }
+        
         bottomView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(0)
@@ -144,6 +164,15 @@ class CustomChatRoomViewController: UIViewController {
     
     private func addTargets() {
         swapLanguageButton.addTarget(self, action: #selector(swapLanguageButtonTapped), for: .touchUpInside)
+    }
+    
+    // MARK: - configureTableView()
+    
+    private func configureTableView() {
+        messagesTableView.dataSource = self
+        messagesTableView.delegate = self
+        
+        messagesTableView.register(MyMessageTableViewCell.self, forCellReuseIdentifier: MyMessageTableViewCell.identifier)
     }
     
     // MARK: - @objc func
@@ -219,5 +248,23 @@ extension CustomChatRoomViewController: KeyboardInputBarDelegate {
     func didTapTranslate(_ isTranslated: Bool) {
         print("Tapppp")
         inputBarTopStackView.isHidden = !isTranslated
+    }
+}
+
+
+extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return dummy.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
+        
+        cell.message = dummy[indexPath.row]
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+       return UITableView.automaticDimension
     }
 }
