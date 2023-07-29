@@ -57,7 +57,7 @@ class CustomChatRoomViewController: UIViewController {
     
     private lazy var messagesTableView: UITableView = {
         let tv = UITableView()
-        //tv.separatorStyle = .none
+        tv.separatorStyle = .none
         return tv
     }()
     

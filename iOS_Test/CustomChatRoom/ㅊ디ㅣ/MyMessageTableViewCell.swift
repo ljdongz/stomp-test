@@ -11,9 +11,15 @@ class MyMessageTableViewCell: UITableViewCell {
     
     static let identifier = "MyMessageTableViewCell"
     
+    private lazy var containerView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
     private lazy var messageView: UIView = {
         let view = UIView()
         view.backgroundColor = .tintColor
+        view.layer.cornerRadius = 10
         return view
     }()
     
@@ -31,6 +37,7 @@ class MyMessageTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
         label.textColor = .black
         label.numberOfLines = 1
+        label.text = "오후 7:15"
         return label
     }()
 
@@ -55,8 +62,12 @@ class MyMessageTableViewCell: UITableViewCell {
     // MARK: - addSubviews()
     
     private func addSubviews() {
-        contentView.addSubview(messageView)
-        contentView.addSubview(timeLabel)
+        
+        contentView.addSubview(containerView)
+        
+        
+        containerView.addSubview(messageView)
+        containerView.addSubview(timeLabel)
         
         messageView.addSubview(messageLabel)
     }
@@ -65,10 +76,16 @@ class MyMessageTableViewCell: UITableViewCell {
     
     private func configureConstraints() {
         
+        containerView.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.width.lessThanOrEqualToSuperview().multipliedBy(0.8)
+        }
+        
         messageView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(2)
             make.trailing.equalToSuperview().inset(5)
-            make.width.lessThanOrEqualToSuperview().multipliedBy(0.8)
+            make.width.equalToSuperview()
         }
         
         messageLabel.snp.makeConstraints { make in
@@ -76,6 +93,10 @@ class MyMessageTableViewCell: UITableViewCell {
             make.horizontalEdges.equalToSuperview().inset(10)
         }
         
+        timeLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(messageView.snp.bottom)
+            make.trailing.equalTo(messageView.snp.leading).offset(-3)
+        }
         
     }
 }
