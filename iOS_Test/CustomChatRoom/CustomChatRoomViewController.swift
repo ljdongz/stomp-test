@@ -173,6 +173,7 @@ class CustomChatRoomViewController: UIViewController {
         messagesTableView.delegate = self
         
         messagesTableView.register(MyMessageTableViewCell.self, forCellReuseIdentifier: MyMessageTableViewCell.identifier)
+        messagesTableView.register(OtherMessageTableViewCell.self, forCellReuseIdentifier: OtherMessageTableViewCell.identifier)
     }
     
     // MARK: - @objc func
@@ -258,10 +259,20 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
         
-        cell.message = dummy[indexPath.row]
-        return cell
+        if indexPath.row % 2 == 0 {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
+            
+            cell.message = dummy[indexPath.row]
+            return cell
+        } else {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
+            
+            cell.message = dummy[indexPath.row]
+            return cell
+        }
+        
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

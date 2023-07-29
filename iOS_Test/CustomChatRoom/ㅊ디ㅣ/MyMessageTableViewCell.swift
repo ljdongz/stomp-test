@@ -47,6 +47,12 @@ class MyMessageTableViewCell: UITableViewCell {
         }
     }
     
+    var time: Date? {
+        didSet {
+            
+        }
+    }
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -83,7 +89,7 @@ class MyMessageTableViewCell: UITableViewCell {
         }
         
         messageView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(2)
+            make.verticalEdges.equalToSuperview().inset(3)
             make.trailing.equalToSuperview().inset(5)
             make.width.equalToSuperview()
         }
