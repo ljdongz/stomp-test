@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol MessageTableViewCellDelegate: AnyObject {
+    func messagePressed(_ gesture: UILongPressGestureRecognizer)
+}
+
 class OtherMessageTableViewCell: UITableViewCell {
 
     static let identifier = "OtherMessageTableViewCell"
@@ -45,6 +49,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         label.textColor = .white
         label.numberOfLines = 0
         label.lineBreakMode = .byCharWrapping // 글자 단위로 줄바꿈
+        label.isUserInteractionEnabled = true
         return label
     }()
     
@@ -56,6 +61,12 @@ class OtherMessageTableViewCell: UITableViewCell {
         label.text = "오후 7:15"
         return label
     }()
+    
+    weak var delegate: MessageTableViewCellDelegate? {
+        didSet {
+            print(messageLabel.text)
+        }
+    }
 
     var message: String? {
         didSet {
@@ -69,12 +80,27 @@ class OtherMessageTableViewCell: UITableViewCell {
         }
     }
     
+    var isContinuous: Bool = false {
+        didSet {
+            self.avatarView.isHidden = isContinuous
+            
+            if isContinuous {
+                usernameLabel.snp.updateConstraints { make in
+                    make.height.equalTo(0)
+                }
+            }
+        }
+    }
+    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         addSubviews()
         configureConstraints()
+        addTargets()
+        
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
@@ -103,13 +129,12 @@ class OtherMessageTableViewCell: UITableViewCell {
         
         containerView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
+            make.horizontalEdges.equalToSuperview()
         }
         
         avatarView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(3)
-            make.leading.equalToSuperview().inset(5)
+            make.leading.equalToSuperview().inset(8)
             make.width.height.equalTo(contentView.snp.width).multipliedBy(0.1)
         }
         
@@ -123,7 +148,7 @@ class OtherMessageTableViewCell: UITableViewCell {
             make.top.equalTo(usernameLabel.snp.bottom).offset(2)
             make.bottom.equalToSuperview().inset(3)
             make.leading.equalTo(avatarView.snp.trailing).offset(5)
-            make.width.equalToSuperview()
+            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.65)
         }
         
         messageLabel.snp.makeConstraints { make in
@@ -134,6 +159,19 @@ class OtherMessageTableViewCell: UITableViewCell {
         timeLabel.snp.makeConstraints { make in
             make.bottom.equalTo(messageView.snp.bottom)
             make.leading.equalTo(messageView.snp.trailing).offset(3)
+        }
+        
+    }
+    
+    private func addTargets() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+        messageLabel.addGestureRecognizer(longPress)
+    }
+    
+    @objc func longPressed(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            print("Long")
+            delegate?.messagePressed(gesture)
         }
         
     }

@@ -59,6 +59,9 @@ class MyMessageTableViewCell: UITableViewCell {
         
         addSubviews()
         configureConstraints()
+        addTargets()
+        
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
@@ -84,14 +87,13 @@ class MyMessageTableViewCell: UITableViewCell {
         
         containerView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.width.lessThanOrEqualToSuperview().multipliedBy(0.8)
+            make.horizontalEdges.equalToSuperview()
         }
         
         messageView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(3)
-            make.trailing.equalToSuperview().inset(5)
-            make.width.equalToSuperview()
+            make.trailing.equalToSuperview().inset(8)
+            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.75)
         }
         
         messageLabel.snp.makeConstraints { make in
@@ -105,4 +107,18 @@ class MyMessageTableViewCell: UITableViewCell {
         }
         
     }
+    
+    private func addTargets() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
+        messageView.addGestureRecognizer(longPress)
+    }
+    
+    @objc func longPressed(_ gesture: UILongPressGestureRecognizer) {
+        if gesture.state == .began {
+            print("Long")
+            
+        }
+        
+    }
 }
+
