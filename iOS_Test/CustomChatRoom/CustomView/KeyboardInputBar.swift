@@ -30,6 +30,7 @@ class KeyboardInputBar: UIView {
         tv.layer.borderWidth = 1
         tv.layer.borderColor = UIColor.lightGray.cgColor
         tv.layer.cornerRadius = 10
+        tv.delegate = self
         return tv
     }()
     
@@ -51,6 +52,9 @@ class KeyboardInputBar: UIView {
         let button = UIButton()
         button.setImage(UIImage(systemName: "paperplane"), for: .normal)
         button.tintColor = .lightGray
+        button.backgroundColor = .white
+        button.layer.cornerRadius = 15
+        button.isEnabled = false
         return button
     }()
     
@@ -90,17 +94,19 @@ class KeyboardInputBar: UIView {
     
     private func configureConstraints() {
         plusButton.snp.makeConstraints { make in
-            make.leading.bottom.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview().inset(10)
+            make.leading.equalToSuperview().inset(15)
             make.width.height.equalTo(30)
         }
         
         sendButton.snp.makeConstraints { make in
-            make.trailing.bottom.equalToSuperview().inset(10)
+            make.bottom.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(15)
             make.width.height.equalTo(30)
         }
         
         translateButton.snp.makeConstraints { make in
-            make.trailing.equalTo(sendButton.snp.leading).offset(-10)
+            make.trailing.equalTo(sendButton.snp.leading).offset(-5)
             make.bottom.equalToSuperview().inset(10)
             make.width.height.equalTo(30)
         }
@@ -131,8 +137,27 @@ class KeyboardInputBar: UIView {
     }
     
     @objc func sendButtonTapped() {
-        print("Send")
-        delegate?.didTapSend(inputField.text)
-        inputField.text.removeAll()
+        if isTranslated {
+            inputField.text = "Translate!!"
+        } else {
+            print("Send")
+            delegate?.didTapSend(inputField.text)
+            inputField.text.removeAll()
+        }
+    }
+}
+
+extension KeyboardInputBar: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        let textCount = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).count
+        if textCount == 0 {
+            sendButton.isEnabled = false
+            sendButton.backgroundColor = .white
+            sendButton.tintColor = .lightGray
+        } else {
+            sendButton.isEnabled = true
+            sendButton.backgroundColor = #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)
+            sendButton.tintColor = .white
+        }
     }
 }

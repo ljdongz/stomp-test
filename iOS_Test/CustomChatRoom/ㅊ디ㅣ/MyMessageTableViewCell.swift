@@ -40,8 +40,6 @@ class MyMessageTableViewCell: UITableViewCell {
         label.text = "오후 7:15"
         return label
     }()
-
-    weak var delegate: MessageTableViewCellDelegate?
     
     var message: String? {
         didSet {
@@ -61,7 +59,6 @@ class MyMessageTableViewCell: UITableViewCell {
         
         addSubviews()
         configureConstraints()
-        addTargets()
         
         selectionStyle = .none
     }
@@ -106,19 +103,6 @@ class MyMessageTableViewCell: UITableViewCell {
         timeLabel.snp.makeConstraints { make in
             make.bottom.equalTo(messageView.snp.bottom)
             make.trailing.equalTo(messageView.snp.leading).offset(-3)
-        }
-        
-    }
-    
-    private func addTargets() {
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
-        messageView.addGestureRecognizer(longPress)
-    }
-    
-    @objc func longPressed(_ gesture: UILongPressGestureRecognizer) {
-        if gesture.state == .began {
-            print("Long")
-            delegate?.messagePressed(gesture)
         }
         
     }

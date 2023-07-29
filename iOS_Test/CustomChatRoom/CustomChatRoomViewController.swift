@@ -72,6 +72,8 @@ class CustomChatRoomViewController: UIViewController {
     
     private var tapGesture = UITapGestureRecognizer()
     
+    var editMenuInteraction: UIEditMenuInteraction?
+    
     var dummy: [String] = [
         "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",
         "hello \n hahah",
@@ -98,6 +100,10 @@ class CustomChatRoomViewController: UIViewController {
         configureConstraints()
         addTargets()
         configureTableView()
+        
+        
+        editMenuInteraction = UIEditMenuInteraction(delegate: self)
+        messagesTableView.addInteraction(editMenuInteraction!)
     }
     
     // MARK: - viewWillAppear
@@ -248,24 +254,7 @@ class CustomChatRoomViewController: UIViewController {
     }
 }
 
-extension CustomChatRoomViewController: KeyboardInputBarDelegate {
-    func didTapSend(_ text: String) {
-        print("Tapppp")
-        inputBarTopStackView.isHidden = true
-        keyboardInputBar.isTranslated = false
-        dummy.append(text)
-        messagesTableView.reloadData()
-        
-        let indexPath = IndexPath(row: dummy.count - 1, section: 0)
-        
-        messagesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
-    }
-    func didTapTranslate(_ isTranslated: Bool) {
-        print("Tapppp")
-        inputBarTopStackView.isHidden = !isTranslated
-    }
-}
-
+// MARK: - Ext: TableView
 
 extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -278,7 +267,6 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
 
             cell.message = dummy[indexPath.row]
-            cell.delegate = self
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
@@ -299,13 +287,59 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
     }
 }
 
+// MARK: - Ext:
+
+extension CustomChatRoomViewController: UIEditMenuInteractionDelegate {
+    func editMenuInteraction(_ interaction: UIEditMenuInteraction,
+                             menuFor configuration: UIEditMenuConfiguration,
+                             suggestedActions: [UIMenuElement]) -> UIMenu? {
+        
+        let customMenu = UIMenu(title: "", options: .displayInline, children: [
+            UIAction(title: "번역") { _ in
+                print("번역")
+            },
+            UIAction(title: "답장") { _ in
+                print("답장")
+            },
+            UIAction(title: "찜하기") { _ in
+                print("찜하기")
+            },
+            UIAction(title: "신고") { _ in
+                print("신고")
+            }
+        ])
+        return UIMenu(children: customMenu.children) // For Custom Menu Only
+    }
+}
+
+// MARK: - Ext: KeyboardInputBarDelegate
+
+extension CustomChatRoomViewController: KeyboardInputBarDelegate {
+    func didTapSend(_ text: String) {
+        print("Tapppp")
+        inputBarTopStackView.isHidden = true
+        keyboardInputBar.isTranslated = false
+        dummy.append(text)
+        messagesTableView.reloadData()
+        
+        let indexPath = IndexPath(row: dummy.count - 1, section: 0)
+        
+        messagesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+    }
+    func didTapTranslate(_ isTranslated: Bool) {
+        print("Tapppp")
+        inputBarTopStackView.isHidden = !isTranslated
+    }
+}
+
+// MARK: - Ext: MessageTableViewCellDelegate
+
 extension CustomChatRoomViewController: MessageTableViewCellDelegate {
     func messagePressed(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: messagesTableView)
-        print(location)
         
-        print(messagesTableView.indexPathForRow(at: location))
+        let conf = UIEditMenuConfiguration(identifier: "", sourcePoint: location)
+        editMenuInteraction?.presentEditMenu(with: conf)
     }
-    
-
 }
+
