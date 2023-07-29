@@ -24,6 +24,14 @@ class OtherMessageTableViewCell: UITableViewCell {
         return iv
     }()
     
+    private lazy var usernameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Unknown"
+        label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
+        label.textColor = .black
+        return label
+    }()
+    
     private lazy var messageView: UIView = {
         let view = UIView()
         view.backgroundColor = .lightGray
@@ -61,16 +69,10 @@ class OtherMessageTableViewCell: UITableViewCell {
         }
     }
     
-    var isAvatarHidden: Bool = false {
-        didSet {
-            avatarView.isHidden = isAvatarHidden
-        }
-    }
-    
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .blue
+
         addSubviews()
         configureConstraints()
     }
@@ -90,6 +92,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         containerView.addSubview(timeLabel)
         
         containerView.addSubview(avatarView)
+        containerView.addSubview(usernameLabel)
         
         messageView.addSubview(messageLabel)
     }
@@ -101,7 +104,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         containerView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview()
             make.leading.equalToSuperview()
-            make.width.lessThanOrEqualToSuperview().multipliedBy(0.8)
+            make.width.lessThanOrEqualToSuperview().multipliedBy(0.7)
         }
         
         avatarView.snp.makeConstraints { make in
@@ -110,8 +113,15 @@ class OtherMessageTableViewCell: UITableViewCell {
             make.width.height.equalTo(contentView.snp.width).multipliedBy(0.1)
         }
         
+        usernameLabel.snp.makeConstraints { make in
+            make.top.equalTo(avatarView.snp.top)
+            make.leading.equalTo(avatarView.snp.trailing).offset(5)
+            make.height.equalTo(usernameLabel.intrinsicContentSize.height)
+        }
+        
         messageView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(3)
+            make.top.equalTo(usernameLabel.snp.bottom).offset(2)
+            make.bottom.equalToSuperview().inset(3)
             make.leading.equalTo(avatarView.snp.trailing).offset(5)
             make.width.equalToSuperview()
         }

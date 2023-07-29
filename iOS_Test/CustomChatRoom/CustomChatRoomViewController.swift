@@ -74,7 +74,8 @@ class CustomChatRoomViewController: UIViewController {
     var dummy: [String] = [
         "hellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello",
         "hello \n hahah",
-        "hello \n hahah \n hadfha"
+        "hello \n hahah \n hadfha",
+        "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA"
     ]
     
     // MARK: - viewDidLoad()
@@ -262,13 +263,15 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
         
         if indexPath.row % 2 == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
-            
+
             cell.message = dummy[indexPath.row]
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
             
             cell.message = dummy[indexPath.row]
+        
+        
             return cell
         }
         
