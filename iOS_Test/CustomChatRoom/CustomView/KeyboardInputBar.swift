@@ -10,6 +10,7 @@ import SnapKit
 
 protocol KeyboardInputBarDelegate: AnyObject {
     func didTapSend()
+    func didTapTranslate(_ isTranslated: Bool)
 }
 
 class KeyboardInputBar: UIView {
@@ -54,6 +55,14 @@ class KeyboardInputBar: UIView {
     }()
     
     weak var delegate: KeyboardInputBarDelegate?
+    
+    var isTranslated: Bool = false {
+        didSet {
+            self.translateButton.tintColor = isTranslated ? .tintColor : .lightGray
+            let image = isTranslated ? UIImage(systemName: "checkmark") : UIImage(systemName: "paperplane")
+            self.sendButton.setImage(image, for: .normal)
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -117,6 +126,8 @@ class KeyboardInputBar: UIView {
     
     @objc func translateButtonTapped() {
         print("Translate")
+        isTranslated.toggle()
+        delegate?.didTapTranslate(isTranslated)
     }
     
     @objc func sendButtonTapped() {

@@ -10,12 +10,52 @@ import SnapKit
 
 class CustomChatRoomViewController: UIViewController {
     
+    // 메시지 입력 창
     private lazy var keyboardInputBar: KeyboardInputBar = {
         let bar = KeyboardInputBar()
         bar.delegate = self
         return bar
     }()
     
+    // 번역 언어 설정 화면
+    private lazy var inputBarTopStackView: UIStackView = {
+        let sv = UIStackView()
+        sv.axis = .horizontal
+        sv.spacing = 0
+        sv.distribution = .fill
+        sv.alignment = .fill
+        sv.isHidden = true
+        return sv
+    }()
+    
+    private lazy var sourceLanguageButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("한국어 ", for: .normal)
+        button.setTitleColor(.lightGray, for: .normal)
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.tintColor = .lightGray
+        button.semanticContentAttribute = .forceRightToLeft
+        return button
+    }()
+    
+    private lazy var targetLanguageButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("영어 ", for: .normal)
+        button.setTitleColor(.lightGray, for: .normal)
+        button.setImage(UIImage(systemName: "chevron.down"), for: .normal)
+        button.tintColor = .lightGray
+        button.semanticContentAttribute = .forceRightToLeft
+        return button
+    }()
+    
+    private lazy var swapLanguageButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(systemName: "arrow.left.arrow.right"), for: .normal)
+        button.tintColor = .lightGray
+        return button
+    }()
+    
+    // 키보드 뒤에 숨겨지는 뷰
     private lazy var bottomView: UIView = {
         let view = UIView()
         return view
@@ -36,6 +76,7 @@ class CustomChatRoomViewController: UIViewController {
         
         addSubviews()
         configureConstraints()
+        addTargets()
     }
     
     // MARK: - viewWillAppear
@@ -58,6 +99,12 @@ class CustomChatRoomViewController: UIViewController {
     
     private func addSubviews() {
         view.addSubview(keyboardInputBar)
+        view.addSubview(inputBarTopStackView)
+        
+        inputBarTopStackView.addArrangedSubview(sourceLanguageButton)
+        inputBarTopStackView.addArrangedSubview(swapLanguageButton)
+        inputBarTopStackView.addArrangedSubview(targetLanguageButton)
+        
         view.addSubview(bottomView)
     }
     
@@ -69,10 +116,34 @@ class CustomChatRoomViewController: UIViewController {
             make.bottom.equalTo(bottomView.snp.top)
         }
         
+        inputBarTopStackView.snp.makeConstraints { make in
+            make.bottom.equalTo(keyboardInputBar.snp.top)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(40)
+        }
+        
+        swapLanguageButton.snp.makeConstraints { make in
+            make.width.equalToSuperview().multipliedBy(0.1/0.5)
+        }
+        
+        sourceLanguageButton.snp.makeConstraints { make in
+            make.width.equalToSuperview().multipliedBy(0.2/0.5)
+        }
+        
+        targetLanguageButton.snp.makeConstraints { make in
+            make.width.equalToSuperview().multipliedBy(0.2/0.5)
+        }
+        
         bottomView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(0)
         }
+    }
+    
+    // MARK: - addTargets()
+    
+    private func addTargets() {
+        swapLanguageButton.addTarget(self, action: #selector(swapLanguageButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - @objc func
@@ -131,10 +202,22 @@ class CustomChatRoomViewController: UIViewController {
     @objc func handleTap() {
         view.endEditing(true)
     }
+    
+    @objc func swapLanguageButtonTapped() {
+        let swap = targetLanguageButton.titleLabel?.text
+        targetLanguageButton.setTitle(sourceLanguageButton.currentTitle, for: .normal)
+        sourceLanguageButton.setTitle(swap, for: .normal)
+    }
 }
 
 extension CustomChatRoomViewController: KeyboardInputBarDelegate {
     func didTapSend() {
         print("Tapppp")
+        inputBarTopStackView.isHidden = true
+        keyboardInputBar.isTranslated = false
+    }
+    func didTapTranslate(_ isTranslated: Bool) {
+        print("Tapppp")
+        inputBarTopStackView.isHidden = !isTranslated
     }
 }
