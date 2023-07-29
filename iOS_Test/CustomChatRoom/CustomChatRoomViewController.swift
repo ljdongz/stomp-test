@@ -8,6 +8,18 @@
 import UIKit
 import SnapKit
 
+struct CustomMessage {
+    var sender: CustomSender
+    var sentDate: Date
+    var content: String
+}
+
+struct CustomSender {
+    var photoUrlString: String?
+    var senderId: String
+    var displayName: String
+}
+
 class CustomChatRoomViewController: UIViewController {
     
     // 메시지 입력 창
@@ -85,6 +97,24 @@ class CustomChatRoomViewController: UIViewController {
         "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
         "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA",
         "My Name is xxx FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA"
+    ]
+    
+    var messages: [CustomMessage] = [
+        CustomMessage(sender: CustomSender(senderId: "1", displayName: "JD"), sentDate: Date(), content: "Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book."),
+        CustomMessage(sender: CustomSender(senderId: "1", displayName: "JD"), sentDate: Date(), content: "t has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged."),
+        CustomMessage(sender: CustomSender(senderId: "2", displayName: "망고"), sentDate: Date(), content: "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout"),
+        CustomMessage(sender: CustomSender(senderId: "3", displayName: "제이디"), sentDate: Date(), content: "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit..."),
+        CustomMessage(sender: CustomSender(senderId: "4", displayName: "만자"), sentDate: Date(), content: "Contrary to popular belief, Lorem Ipsum is not simply random text."),
+        CustomMessage(sender: CustomSender(senderId: "2", displayName: "망고"), sentDate: Date(), content: "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable."),
+        CustomMessage(sender: CustomSender(senderId: "2", displayName: "망고"), sentDate: Date(), content: "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested."),
+        CustomMessage(sender: CustomSender(senderId: "2", displayName: "망고"), sentDate: Date(), content: "FC BARCELONA EL CLASICO FRENKIE DE JONG PEDRI GAVI SPAIN LA LIGA"),
+        CustomMessage(sender: CustomSender(senderId: "4", displayName: "만자"), sentDate: Date(), content: "Lorem Ipsum is simply dummy text of the printing and typesetting industry."),
+        CustomMessage(sender: CustomSender(senderId: "3", displayName: "제이디"), sentDate: Date(), content: "테스트"),
+        CustomMessage(sender: CustomSender(senderId: "3", displayName: "제이디"), sentDate: Date(), content: "테스트"),
+        CustomMessage(sender: CustomSender(senderId: "4", displayName: "만자"), sentDate: Date(), content: "테스트"),
+        CustomMessage(sender: CustomSender(senderId: "4", displayName: "만자"), sentDate: Date(), content: "테스트"),
+        CustomMessage(sender: CustomSender(senderId: "4", displayName: "만자"), sentDate: Date(), content: "테스트"),
+        
     ]
     
     // MARK: - viewDidLoad()
@@ -190,6 +220,15 @@ class CustomChatRoomViewController: UIViewController {
         messagesTableView.register(OtherMessageTableViewCell.self, forCellReuseIdentifier: OtherMessageTableViewCell.identifier)
     }
     
+    /// 한 사람이 연속해서 메시지를 보내는지 체크
+    /// - Parameter indexPath: indexPath
+    /// - Returns: true: 연속, false: 비연속
+    func isSenderConsecutiveMessages(row: Int) -> Bool {
+        if row != 0 && (messages[row - 1].sender.senderId == messages[row].sender.senderId) { return true }
+        else { return false }
+    }
+    
+    
     // MARK: - @objc func
     
     // 키보드가 나타났다는 알림을 받으면 실행할 메서드
@@ -258,29 +297,31 @@ class CustomChatRoomViewController: UIViewController {
 
 extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dummy.count
+        return messages.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        if indexPath.row == 0 {
+        let message = messages[indexPath.row]
+        
+        if message.sender.senderId == "1" {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
-
-            cell.message = dummy[indexPath.row]
+    
+            cell.message = message.content
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
-            
-            cell.message = dummy[indexPath.row]
+
+            cell.message = message.content
+            cell.displayName = message.sender.displayName
             cell.delegate = self
-            
-            if indexPath.row != 1 { cell.isContinuous = true }
+
+            if isSenderConsecutiveMessages(row: indexPath.row) { cell.isContinuous = true }
             else { cell.isContinuous = false }
-        
+
             return cell
         }
     }
-    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
        return UITableView.automaticDimension
@@ -316,13 +357,15 @@ extension CustomChatRoomViewController: UIEditMenuInteractionDelegate {
 
 extension CustomChatRoomViewController: KeyboardInputBarDelegate {
     func didTapSend(_ text: String) {
-        print("Tapppp")
+        
         inputBarTopStackView.isHidden = true
         keyboardInputBar.isTranslated = false
-        dummy.append(text)
+        
+        messages.append(CustomMessage(sender: CustomSender(senderId: "1", displayName: "JD"), sentDate: Date(), content: text))
+        
         messagesTableView.reloadData()
         
-        let indexPath = IndexPath(row: dummy.count - 1, section: 0)
+        let indexPath = IndexPath(row: messages.count - 1, section: 0)
         
         messagesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }

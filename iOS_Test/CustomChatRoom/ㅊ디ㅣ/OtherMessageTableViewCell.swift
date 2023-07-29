@@ -28,7 +28,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         return iv
     }()
     
-    private lazy var usernameLabel: UILabel = {
+    private lazy var displayNameLabel: UILabel = {
         let label = UILabel()
         label.text = "Unknown"
         label.font = UIFont.systemFont(ofSize: 14, weight: .medium)
@@ -70,6 +70,12 @@ class OtherMessageTableViewCell: UITableViewCell {
         }
     }
     
+    var displayName: String? {
+        didSet {
+            displayNameLabel.text = displayName
+        }
+    }
+    
     var time: Date? {
         didSet {
             
@@ -80,8 +86,8 @@ class OtherMessageTableViewCell: UITableViewCell {
         didSet {
             self.avatarView.isHidden = isContinuous
             
-            let height = isContinuous ? 0 : usernameLabel.intrinsicContentSize.height
-            usernameLabel.snp.updateConstraints { make in
+            let height = isContinuous ? 0 : displayNameLabel.intrinsicContentSize.height
+            displayNameLabel.snp.updateConstraints { make in
                 make.height.equalTo(height)
             }
         }
@@ -117,7 +123,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         containerView.addSubview(timeLabel)
         
         containerView.addSubview(avatarView)
-        containerView.addSubview(usernameLabel)
+        containerView.addSubview(displayNameLabel)
         
         messageView.addSubview(messageLabel)
     }
@@ -137,14 +143,14 @@ class OtherMessageTableViewCell: UITableViewCell {
             make.width.height.equalTo(contentView.snp.width).multipliedBy(0.1)
         }
         
-        usernameLabel.snp.makeConstraints { make in
+        displayNameLabel.snp.makeConstraints { make in
             make.top.equalTo(avatarView.snp.top)
             make.leading.equalTo(avatarView.snp.trailing).offset(5)
-            make.height.equalTo(usernameLabel.intrinsicContentSize.height)
+            make.height.equalTo(displayNameLabel.intrinsicContentSize.height)
         }
         
         messageView.snp.makeConstraints { make in
-            make.top.equalTo(usernameLabel.snp.bottom).offset(2)
+            make.top.equalTo(displayNameLabel.snp.bottom).offset(2)
             make.bottom.equalToSuperview().inset(3)
             make.leading.equalTo(avatarView.snp.trailing).offset(5)
             make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.65)
