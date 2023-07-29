@@ -25,6 +25,7 @@ class CustomChatRoomViewController: UIViewController {
         sv.distribution = .fill
         sv.alignment = .fill
         sv.isHidden = true
+        sv.backgroundColor = .white
         return sv
     }()
     
@@ -248,10 +249,16 @@ class CustomChatRoomViewController: UIViewController {
 }
 
 extension CustomChatRoomViewController: KeyboardInputBarDelegate {
-    func didTapSend() {
+    func didTapSend(_ text: String) {
         print("Tapppp")
         inputBarTopStackView.isHidden = true
         keyboardInputBar.isTranslated = false
+        dummy.append(text)
+        messagesTableView.reloadData()
+        
+        let indexPath = IndexPath(row: dummy.count - 1, section: 0)
+        
+        messagesTableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }
     func didTapTranslate(_ isTranslated: Bool) {
         print("Tapppp")
@@ -267,24 +274,11 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-//        if indexPath.row % 2 == 0 {
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
-//
-//            cell.message = dummy[indexPath.row]
-//            return cell
-//        } else {
-//            guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
-//
-//            cell.message = dummy[indexPath.row]
-//
-//            return cell
-//        }
-        
-        
         if indexPath.row == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: MyMessageTableViewCell.identifier, for: indexPath) as? MyMessageTableViewCell else { return UITableViewCell() }
 
             cell.message = dummy[indexPath.row]
+            cell.delegate = self
             return cell
         } else {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: OtherMessageTableViewCell.identifier, for: indexPath) as? OtherMessageTableViewCell else { return UITableViewCell() }
@@ -293,13 +287,12 @@ extension CustomChatRoomViewController: UITableViewDelegate, UITableViewDataSour
             cell.delegate = self
             
             if indexPath.row != 1 { cell.isContinuous = true }
+            else { cell.isContinuous = false }
         
             return cell
         }
-        
-        
-        
     }
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
        return UITableView.automaticDimension
@@ -311,7 +304,7 @@ extension CustomChatRoomViewController: MessageTableViewCellDelegate {
         let location = gesture.location(in: messagesTableView)
         print(location)
         
-        //print(messagesTableView.indexPathForRow(at: location))
+        print(messagesTableView.indexPathForRow(at: location))
     }
     
 

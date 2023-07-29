@@ -62,11 +62,7 @@ class OtherMessageTableViewCell: UITableViewCell {
         return label
     }()
     
-    weak var delegate: MessageTableViewCellDelegate? {
-        didSet {
-            print(messageLabel.text)
-        }
-    }
+    weak var delegate: MessageTableViewCellDelegate? 
 
     var message: String? {
         didSet {
@@ -84,10 +80,9 @@ class OtherMessageTableViewCell: UITableViewCell {
         didSet {
             self.avatarView.isHidden = isContinuous
             
-            if isContinuous {
-                usernameLabel.snp.updateConstraints { make in
-                    make.height.equalTo(0)
-                }
+            let height = isContinuous ? 0 : usernameLabel.intrinsicContentSize.height
+            usernameLabel.snp.updateConstraints { make in
+                make.height.equalTo(height)
             }
         }
     }
@@ -105,6 +100,10 @@ class OtherMessageTableViewCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
     }
 
     // MARK: - addSubviews()
@@ -165,7 +164,7 @@ class OtherMessageTableViewCell: UITableViewCell {
     
     private func addTargets() {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed))
-        messageLabel.addGestureRecognizer(longPress)
+        messageView.addGestureRecognizer(longPress)
     }
     
     @objc func longPressed(_ gesture: UILongPressGestureRecognizer) {

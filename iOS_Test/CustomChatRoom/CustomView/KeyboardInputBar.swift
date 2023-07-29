@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 
 protocol KeyboardInputBarDelegate: AnyObject {
-    func didTapSend()
+    func didTapSend(_ text: String)
     func didTapTranslate(_ isTranslated: Bool)
 }
 
@@ -132,6 +132,7 @@ class KeyboardInputBar: UIView {
     
     @objc func sendButtonTapped() {
         print("Send")
-        delegate?.didTapSend()
+        delegate?.didTapSend(inputField.text)
+        inputField.text.removeAll()
     }
 }

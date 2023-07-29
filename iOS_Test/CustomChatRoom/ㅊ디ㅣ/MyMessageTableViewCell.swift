@@ -41,6 +41,8 @@ class MyMessageTableViewCell: UITableViewCell {
         return label
     }()
 
+    weak var delegate: MessageTableViewCellDelegate?
+    
     var message: String? {
         didSet {
             messageLabel.text = message
@@ -116,7 +118,7 @@ class MyMessageTableViewCell: UITableViewCell {
     @objc func longPressed(_ gesture: UILongPressGestureRecognizer) {
         if gesture.state == .began {
             print("Long")
-            
+            delegate?.messagePressed(gesture)
         }
         
     }
