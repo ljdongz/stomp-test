@@ -92,12 +92,13 @@ class MyMessageTableViewCell: UITableViewCell {
         messageView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(3)
             make.trailing.equalToSuperview().inset(8)
-            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.75)
+            
         }
         
         messageLabel.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(5)
             make.horizontalEdges.equalToSuperview().inset(10)
+            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.65)
         }
         
         timeLabel.snp.makeConstraints { make in

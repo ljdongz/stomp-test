@@ -132,17 +132,13 @@ class CustomChatRoomViewController: UIViewController {
         editMenuInteraction = UIEditMenuInteraction(delegate: self)
         messagesTableView.addInteraction(editMenuInteraction!)
         
-        
-        view.addSubview(scrollToBottomButton)
-        view.bringSubviewToFront(scrollToBottomButton)
-
-        scrollToBottomButton.snp.makeConstraints { make in
-            make.bottom.equalTo(inputBarTopStackView.snp.top).offset(-5)
-            make.trailing.equalToSuperview().inset(20)
-            make.width.height.equalTo(40)
+        DispatchQueue.main.async {
+            self.scrollToBottom()
         }
-
-        scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
     }
     
     // MARK: - viewWillAppear
@@ -172,6 +168,9 @@ class CustomChatRoomViewController: UIViewController {
         inputBarTopStackView.addArrangedSubview(sourceLanguageButton)
         inputBarTopStackView.addArrangedSubview(swapLanguageButton)
         inputBarTopStackView.addArrangedSubview(targetLanguageButton)
+        
+        view.addSubview(scrollToBottomButton)
+        view.bringSubviewToFront(scrollToBottomButton)
         
         view.addSubview(bottomView)
     }
@@ -208,6 +207,12 @@ class CustomChatRoomViewController: UIViewController {
             make.bottom.equalTo(keyboardInputBar.snp.top)
         }
         
+        scrollToBottomButton.snp.makeConstraints { make in
+            make.bottom.equalTo(inputBarTopStackView.snp.top).offset(-5)
+            make.trailing.equalToSuperview().inset(20)
+            make.width.height.equalTo(40)
+        }
+        
         bottomView.snp.makeConstraints { make in
             make.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
             make.height.equalTo(0)
@@ -218,6 +223,8 @@ class CustomChatRoomViewController: UIViewController {
     
     private func addTargets() {
         swapLanguageButton.addTarget(self, action: #selector(swapLanguageButtonTapped), for: .touchUpInside)
+        
+        scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - configureTableView()
@@ -231,6 +238,7 @@ class CustomChatRoomViewController: UIViewController {
     }
     
     private func scrollToBottom() {
+        print(messages.count)
         messagesTableView.scrollToRow(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: false)
     }
     

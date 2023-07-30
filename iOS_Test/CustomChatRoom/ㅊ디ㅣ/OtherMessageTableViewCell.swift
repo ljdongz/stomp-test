@@ -153,12 +153,13 @@ class OtherMessageTableViewCell: UITableViewCell {
             make.top.equalTo(displayNameLabel.snp.bottom).offset(2)
             make.bottom.equalToSuperview().inset(3)
             make.leading.equalTo(avatarView.snp.trailing).offset(5)
-            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.65)
+            
         }
         
         messageLabel.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(5)
             make.horizontalEdges.equalToSuperview().inset(10)
+            make.width.lessThanOrEqualTo(contentView.snp.width).multipliedBy(0.6)
         }
         
         timeLabel.snp.makeConstraints { make in
