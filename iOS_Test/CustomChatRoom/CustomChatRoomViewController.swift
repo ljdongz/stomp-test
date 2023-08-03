@@ -266,30 +266,22 @@ class CustomChatRoomViewController: UIViewController {
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
-//            let topScrollIndicatorInset = messagesTableView.scrollIndicatorInsets.top + keyboardRectangle.height
-//            let scrollIndicatorInsets = UIEdgeInsets(top: topScrollIndicatorInset, left: 0, bottom: 0, right: 0)
-//            messagesTableView.scrollIndicatorInsets = scrollIndicatorInsets
+            let safeAreaBottom = self.view.safeAreaInsets.bottom
             
             let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
             
-            let diff = keyboardRectangle.height - view.safeAreaInsets.bottom
-            
-            let safeAreaBottom = self.view.safeAreaInsets.bottom
+            let diffHeight = keyboardRectangle.height - safeAreaBottom
             
             self.bottomView.snp.updateConstraints { make in
                 make.height.equalTo(keyboardRectangle.height - safeAreaBottom)
             }
             
             var newContentOffset = messagesTableView.contentOffset
-            newContentOffset.y = max(0, newContentOffset.y + diff)
-            
-            //messagesTableView.frame = newFrame
+            newContentOffset.y = max(0, newContentOffset.y + diffHeight)
+        
             messagesTableView.contentOffset = newContentOffset
 
             UIView.animate(withDuration: 0.3) {
-                //self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
-                
-                
                 self.view.layoutIfNeeded()
             }
         }
@@ -305,28 +297,21 @@ class CustomChatRoomViewController: UIViewController {
             
             let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
             
-            let diff = keyboardRectangle.height - view.safeAreaInsets.bottom
+            let diffHeight = keyboardRectangle.height - view.safeAreaInsets.bottom
             
             self.bottomView.snp.updateConstraints { make in
                 make.height.equalTo(0)
             }
             
             var newContentOffset = messagesTableView.contentOffset
-            newContentOffset.y = max(0, newContentOffset.y - diff)
+            newContentOffset.y = max(0, newContentOffset.y - diffHeight)
             
-            //messagesTableView.frame = newFrame
             messagesTableView.contentOffset = newContentOffset
             
             UIView.animate(withDuration: 0.3) {
-                //self.view.transform = CGAffineTransform(translationX: 0, y: 0)
-                
-                
                 self.view.layoutIfNeeded()
             }
         }
-        
-        // 키보드의 높이만큼 화면을 내려준다.
-        
     }
     
     @objc func handleTap() {
