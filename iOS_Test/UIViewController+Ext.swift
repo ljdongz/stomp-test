@@ -16,6 +16,22 @@ extension UIViewController {
         ]
     }
     
+    func setupCustomBackButton() {
+        // 버튼에 기본 설정을 적용하고 여백 변경
+        let buttonConfig = UIButton.Configuration.plain()
+        
+        let backButtonImage = UIImage(systemName: "chevron.left") // navigation bar의 back 버튼 이미지
+        let backButton = UIButton(configuration: buttonConfig, primaryAction: UIAction(handler: { [weak self] _ in
+            self?.navigationController?.popViewController(animated: true)
+        }))
+        backButton.setImage(backButtonImage, for: .normal)
+        backButton.imageView?.preferredSymbolConfiguration = .init(weight: .bold)
+        backButton.tintColor = .black
+        
+        let backBarButtonItem = UIBarButtonItem(customView: backButton)
+        navigationItem.leftBarButtonItem = backBarButtonItem
+    }
+    
     // 네비게이션으로 넘어가기 전 화면에서 호출
     func updateNavigationBarBackButton(title: String = "") {
         let backBarButtonItem = UIBarButtonItem(title: title, style: .plain, target: self, action: nil) // title 부분 수정

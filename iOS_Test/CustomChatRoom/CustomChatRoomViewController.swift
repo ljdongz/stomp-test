@@ -36,8 +36,8 @@ class CustomChatRoomViewController: UIViewController {
         sv.spacing = 0
         sv.distribution = .fill
         sv.alignment = .fill
-        sv.isHidden = true
         sv.backgroundColor = .white
+        sv.isHidden = true
         return sv
     }()
     
@@ -123,6 +123,9 @@ class CustomChatRoomViewController: UIViewController {
         // Do any additional setup after loading the view.
         view.backgroundColor = .white
         
+        setupCustomBackButton()
+        updateTitleView(title: "Channel")
+        
         
         addSubviews()
         configureConstraints()
@@ -186,7 +189,7 @@ class CustomChatRoomViewController: UIViewController {
         inputBarTopStackView.snp.makeConstraints { make in
             make.bottom.equalTo(keyboardInputBar.snp.top)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(40)
+            make.height.equalTo(0)
         }
         
         swapLanguageButton.snp.makeConstraints { make in
@@ -208,7 +211,7 @@ class CustomChatRoomViewController: UIViewController {
         }
         
         scrollToBottomButton.snp.makeConstraints { make in
-            make.bottom.equalTo(inputBarTopStackView.snp.top).offset(-5)
+            make.bottom.equalTo(inputBarTopStackView.snp.top).offset(-10)
             make.trailing.equalToSuperview().inset(20)
             make.width.height.equalTo(40)
         }
@@ -238,7 +241,6 @@ class CustomChatRoomViewController: UIViewController {
     }
     
     private func scrollToBottom() {
-        print(messages.count)
         messagesTableView.scrollToRow(at: IndexPath(row: messages.count - 1, section: 0), at: .bottom, animated: false)
     }
     
@@ -410,6 +412,12 @@ extension CustomChatRoomViewController: KeyboardInputBarDelegate {
     
     func didTapTranslate(_ isTranslated: Bool) {
         print("Tapppp")
+        
+        let height = isTranslated ? 40 : 0
+        inputBarTopStackView.snp.updateConstraints { make in
+            make.height.equalTo(height)
+        }
+        
         inputBarTopStackView.isHidden = !isTranslated
     }
 }

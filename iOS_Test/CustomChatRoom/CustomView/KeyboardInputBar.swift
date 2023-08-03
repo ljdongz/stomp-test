@@ -143,6 +143,19 @@ class KeyboardInputBar: UIView {
             print("Send")
             delegate?.didTapSend(inputField.text)
             inputField.text.removeAll()
+            isSendButtonActivate(false)
+        }
+    }
+    
+    private func isSendButtonActivate(_ bool: Bool) {
+        if bool {
+            sendButton.isEnabled = true
+            sendButton.backgroundColor = #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)
+            sendButton.tintColor = .white
+        } else {
+            sendButton.isEnabled = false
+            sendButton.backgroundColor = .white
+            sendButton.tintColor = .lightGray
         }
     }
 }
@@ -151,13 +164,13 @@ extension KeyboardInputBar: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         let textCount = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).count
         if textCount == 0 {
-            sendButton.isEnabled = false
-            sendButton.backgroundColor = .white
-            sendButton.tintColor = .lightGray
+            isSendButtonActivate(false)
         } else {
-            sendButton.isEnabled = true
-            sendButton.backgroundColor = #colorLiteral(red: 0, green: 0.4784313725, blue: 1, alpha: 1)
-            sendButton.tintColor = .white
+            isSendButtonActivate(true)
         }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        print(#function)
     }
 }
