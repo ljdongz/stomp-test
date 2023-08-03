@@ -265,23 +265,30 @@ class CustomChatRoomViewController: UIViewController {
         // 키보드의 높이만큼 화면을 올려준다.
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-
-//            // 네비 바 + 상태 바 높이
-//            let scenes = UIApplication.shared.connectedScenes
-//            let windowScene = scenes.first as? UIWindowScene
-//            let window = windowScene?.windows.first
-        
-//
-//            let statusBarHeight = window?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-//            let navigationBarHeight = self.navigationController?.navigationBar.frame.size.height ?? 0
             
+//            let topScrollIndicatorInset = messagesTableView.scrollIndicatorInsets.top + keyboardRectangle.height
+//            let scrollIndicatorInsets = UIEdgeInsets(top: topScrollIndicatorInset, left: 0, bottom: 0, right: 0)
+//            messagesTableView.scrollIndicatorInsets = scrollIndicatorInsets
+            
+            let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
+            
+            let diff = keyboardRectangle.height - view.safeAreaInsets.bottom
+            
+            let safeAreaBottom = self.view.safeAreaInsets.bottom
+            
+            self.bottomView.snp.updateConstraints { make in
+                make.height.equalTo(keyboardRectangle.height - safeAreaBottom)
+            }
+            
+            var newContentOffset = messagesTableView.contentOffset
+            newContentOffset.y = max(0, newContentOffset.y + diff)
+            
+            //messagesTableView.frame = newFrame
+            messagesTableView.contentOffset = newContentOffset
+
             UIView.animate(withDuration: 0.3) {
                 //self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
-                let safeAreaBottom = self.view.safeAreaInsets.bottom
                 
-                self.bottomView.snp.updateConstraints { make in
-                    make.height.equalTo(keyboardRectangle.height - safeAreaBottom)
-                }
                 
                 self.view.layoutIfNeeded()
             }
@@ -293,16 +300,33 @@ class CustomChatRoomViewController: UIViewController {
         
         view.removeGestureRecognizer(tapGesture)
         
-        // 키보드의 높이만큼 화면을 내려준다.
-        UIView.animate(withDuration: 0.3) {
-            //self.view.transform = CGAffineTransform(translationX: 0, y: 0)
+        if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            
+            let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
+            
+            let diff = keyboardRectangle.height - view.safeAreaInsets.bottom
             
             self.bottomView.snp.updateConstraints { make in
                 make.height.equalTo(0)
             }
             
-            self.view.layoutIfNeeded()
+            var newContentOffset = messagesTableView.contentOffset
+            newContentOffset.y = max(0, newContentOffset.y - diff)
+            
+            //messagesTableView.frame = newFrame
+            messagesTableView.contentOffset = newContentOffset
+            
+            UIView.animate(withDuration: 0.3) {
+                //self.view.transform = CGAffineTransform(translationX: 0, y: 0)
+                
+                
+                self.view.layoutIfNeeded()
+            }
         }
+        
+        // 키보드의 높이만큼 화면을 내려준다.
+        
     }
     
     @objc func handleTap() {
