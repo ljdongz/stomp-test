@@ -115,6 +115,8 @@ class CustomChatRoomViewController: UIViewController {
         
     ]
     
+    private var isKeyboardShow: Bool = false
+    
     // MARK: - viewDidLoad()
     
     override func viewDidLoad() {
@@ -261,6 +263,9 @@ class CustomChatRoomViewController: UIViewController {
     // 키보드가 나타났다는 알림을 받으면 실행할 메서드
     @objc func keyboardWillShow(_ notification: NSNotification){
         
+        // keyboardwillShow가 키보드 열릴 때, 키보드 첫 입력할 때 총 2번 호출되고 있어서 이를 방지하고자 설정
+        if isKeyboardShow { return }
+        isKeyboardShow = true
         
         tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))
         view.addGestureRecognizer(tapGesture) // 테이블 뷰에 추가해주기
@@ -291,6 +296,8 @@ class CustomChatRoomViewController: UIViewController {
     
     // 키보드가 사라졌다는 알림을 받으면 실행할 메서드
     @objc func keyboardWillHide(_ notification: NSNotification){
+        
+        isKeyboardShow = false
         
         view.removeGestureRecognizer(tapGesture)
         
