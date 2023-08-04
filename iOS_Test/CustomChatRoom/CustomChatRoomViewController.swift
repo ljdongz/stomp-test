@@ -228,6 +228,10 @@ class CustomChatRoomViewController: UIViewController {
         swapLanguageButton.addTarget(self, action: #selector(swapLanguageButtonTapped), for: .touchUpInside)
         
         scrollToBottomButton.addTarget(self, action: #selector(scrollToBottomButtonTapped), for: .touchUpInside)
+        
+        sourceLanguageButton.addTarget(self, action: #selector(sourceLanguageButtonTapped), for: .touchUpInside)
+        
+        targetLanguageButton.addTarget(self, action: #selector(targetLanguageButtonTapped), for: .touchUpInside)
     }
     
     // MARK: - configureTableView()
@@ -268,8 +272,6 @@ class CustomChatRoomViewController: UIViewController {
             
             let safeAreaBottom = self.view.safeAreaInsets.bottom
             
-            let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
-            
             let diffHeight = keyboardRectangle.height - safeAreaBottom
             
             self.bottomView.snp.updateConstraints { make in
@@ -294,8 +296,6 @@ class CustomChatRoomViewController: UIViewController {
         
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
-            
-            let prevFrame = messagesTableView.frame   // 키보드 올라오기 전 테이블 뷰 프레임
             
             let diffHeight = keyboardRectangle.height - view.safeAreaInsets.bottom
             
@@ -326,6 +326,20 @@ class CustomChatRoomViewController: UIViewController {
     
     @objc func scrollToBottomButtonTapped() {
         scrollToBottom()
+    }
+    
+    @objc func sourceLanguageButtonTapped() {
+        let vc = PickerViewController(tag: 0)
+        vc.delegate = self
+        vc.modalPresentationStyle = .overCurrentContext
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @objc func targetLanguageButtonTapped() {
+        let vc = PickerViewController(tag: 1)
+        vc.delegate = self
+        vc.modalPresentationStyle = .overCurrentContext
+        present(vc, animated: true, completion: nil)
     }
 }
 
@@ -442,3 +456,12 @@ extension CustomChatRoomViewController: MessageTableViewCellDelegate {
     }
 }
 
+
+// MARK: - Ext: SendDataDelegate
+
+extension CustomChatRoomViewController: SendDataDelegate {
+    func sendData(tag: Int, data: String) {
+        let button = tag == 0 ? sourceLanguageButton : targetLanguageButton
+        button.setTitle("\(data) ", for: .normal)
+    }
+}

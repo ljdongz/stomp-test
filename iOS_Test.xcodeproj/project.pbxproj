@@ -22,6 +22,7 @@
 		570063B32A73A4CE0051F42A /* MyMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B22A73A4CE0051F42A /* MyMessageTableViewCell.swift */; };
 		570063B62A73A4E50051F42A /* OtherMessageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B52A73A4E50051F42A /* OtherMessageTableViewCell.swift */; };
 		570063B92A73A6C30051F42A /* KeyboardInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063B82A73A6C30051F42A /* KeyboardInputBar.swift */; };
+		570063D62A7C0B390051F42A /* PickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 570063D52A7C0B390051F42A /* PickerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 		570063B22A73A4CE0051F42A /* MyMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyMessageTableViewCell.swift; sourceTree = "<group>"; };
 		570063B52A73A4E50051F42A /* OtherMessageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OtherMessageTableViewCell.swift; sourceTree = "<group>"; };
 		570063B82A73A6C30051F42A /* KeyboardInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardInputBar.swift; sourceTree = "<group>"; };
+		570063D52A7C0B390051F42A /* PickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -103,6 +105,7 @@
 				570063B72A73A6990051F42A /* CustomView */,
 				570063B42A73A4D40051F42A /* Cell */,
 				570063B02A73A4650051F42A /* CustomChatRoomViewController.swift */,
+				570063D52A7C0B390051F42A /* PickerViewController.swift */,
 			);
 			path = CustomChatRoom;
 			sourceTree = "<group>";
@@ -211,6 +214,7 @@
 				570063A52A6D7E7B0051F42A /* ViewController.swift in Sources */,
 				570063A72A6D84200051F42A /* ChatViewController.swift in Sources */,
 				570063B32A73A4CE0051F42A /* MyMessageTableViewCell.swift in Sources */,
+				570063D62A7C0B390051F42A /* PickerViewController.swift in Sources */,
 				570063B12A73A4650051F42A /* CustomChatRoomViewController.swift in Sources */,
 				5700637E2A651E790051F42A /* SceneDelegate.swift in Sources */,
 				570063B92A73A6C30051F42A /* KeyboardInputBar.swift in Sources */,
